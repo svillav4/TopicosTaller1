@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse
-from admin.openAIManager import openAIManager
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 from accounts.models import User, Person, Company
 import json
 import numpy as np
+from admin import providerFactory
 
 def __updateCheckpointStatus(checkpoint, roadmap):
     chkpt = Checkpoint.objects.get(numberOfCheckpoint=checkpoint, roadmap=roadmap)
@@ -41,9 +41,11 @@ def roadmapGenerator(request):
             interest = Interest.objects.get(id=interest).name
             objective = form.cleaned_data['objective']
             salary = form.cleaned_data['salary']
-            openAI = openAIManager()
-            roadmap = openAI.generateRoadmap(objective=objective, salary=salary) #JSON with detailed roadmap.
-            embedding = np.array(openAI.embedObjective(objective)).tobytes()
+            name = form.cleaned_data['ia']
+            ai_provider = providerFactory.get_ai_provider(name)
+            roadmap = ai_provider.generateRoadmap(objective=objective, salary=salary) #JSON with detailed roadmap.
+            embbeding_ia = providerFactory.get_ai_provider('openia')
+            embedding = np.array(embbeding_ia.embedObjective(objective)).tobytes()
             user = User.objects.get(username=request.user)
             person = Person.objects.get(user=user.id)
             roadmapInstance = createDBRoadmap(roadmap, interest, person, objective, embedding)

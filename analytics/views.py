@@ -4,7 +4,7 @@ from datetime import date
 from accounts.models import User, Person, Company
 from roadMap.models import Roadmap, Interest, UserInterest, LikeRoadmap
 from admin.charts import usersPerInterest, ageRangesPerInterest, roadmapCompletionPercentage #Charts
-from admin.openAIManager import openAIManager
+from admin.openAIManager import ChatGPTProvider
 from copy import deepcopy
 import numpy as np
 
@@ -122,7 +122,7 @@ def __filteredRoadmaps(objective, interest, userId):
         if not roadmaps:
             return None
 
-        openAI = openAIManager()
+        openAI = ChatGPTProvider()
         embeddedObjective = openAI.embedObjective(objective)
         cosineSimilarity = lambda a, b: np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 

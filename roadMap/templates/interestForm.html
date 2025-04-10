@@ -39,6 +39,15 @@
             </div>
             <div class="input-field">
                 <div class="input-camp">
+                    <label for="ia" class="labelInterest">Choose the AI to generate roadmap</label>
+                    <select name="ia" id="ia" class="form-select">
+                        <option value="openia">OpenIA</option>
+                        <option value="geminiia">GeminiIA</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-field">
+                <div class="input-camp">
                     <label for="salary" class="labelSalary">Select expected salary per year in USD</label>
                     <h5 id="value" name="value"></h5>
                     <input type="range" class="form-range" min="10000" max="500000" step="5000" id="salary" name="salary" onchange="changeValue(this)">

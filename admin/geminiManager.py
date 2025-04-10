@@ -1,18 +1,26 @@
 import json
-from openai import OpenAI
 from django.conf import settings
 from .interfaces import RoadmapGeneration
+import google.generativeai as genai
 
-class ChatGPTProvider(RoadmapGeneration):
+
+class GeminiAIProvider(RoadmapGeneration):
     def __init__(self):
-        api_key = settings.KEYS['OPENAI_API_KEY']
-        self.client = OpenAI(api_key=api_key)
-        self.models = {
-            'gpt': "gpt-4o-mini",
-            'embedding': "text-embedding-3-small"
-        }
+        gemini_api_key = settings.KEYS.get('GEMINI_API_KEY')
+
+
+        if gemini_api_key:
+            genai.configure(api_key=gemini_api_key)
+            self.gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+        else:
+            self.gemini_model = None
+            print("Warning: GEMINI_API_KEY not found in settings. Gemini functionality will be limited.")
+
 
     def generateRoadmap(self, objective, salary):
+        if not self.gemini_model:
+            return {"error": "Gemini API key is not configured."}
+
         content = f"""Imagine you're an experienced recruiter. You're requested to build a 5 steps, self-study roadmap to be a {objective}. For each step of the roadmap, bring recommendations on how to expand the topic you're suggesting and some material you can provide. Ensure that each step you bring is planned learn something towards the desired objective. Focus only in courses I can do from home, online. Also, provide a job I might apply for after completing each step. Justify how this roadmap will benefy me on my professional career and finally, after making an analysis, say if {salary} dollars a year as expected salary is a good estimation, or either to high or to low considering the level that can be achieved with this roadmap.
 
 Bring your answer in the following json format:
@@ -26,18 +34,17 @@ steps: array of steps in the following format:
 benefit: How this roadmap benefit me.
 salary: string with your opinion of my salary expectations.
 Do not add endline dot at the end of the name.
-Bring your response on the given format as a pure json-object format."""
-        msg = [
-            {"role": "user", "content": content}
-        ]
-        response = self.client.chat.completions.create(
-            model=self.models['gpt'],
-            messages=msg,
-            response_format={"type": "json_object"},
-            max_tokens=2000
-        )
-        return json.loads(response.choices[0].message.content) # Returns JSON formmated response.
+Bring your response on the given format as a pure json format."""
 
-    def embedObjective(self, objective):
-        objective = objective.replace("\n", " ")
-        return self.client.embeddings.create(input=[objective], model=self.models['embedding']).data[0].embedding
+        try:
+            response = self.gemini_model.generate_content(content)
+            json_string = response.text
+            # Gemini might return extra text, so try to find the JSON part
+            start_index = json_string.find('{')
+            end_index = json_string.rfind('}') + 1
+            if start_index != -1 and end_index > start_index:
+                return json.loads(json_string[start_index:end_index])
+            else:
+                return {"error": "Could not parse JSON response from Gemini.", "raw_response": json_string}
+        except Exception as e:
+            return {"error": f"Error generating roadmap with Gemini: {e}"}
