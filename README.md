@@ -41,9 +41,10 @@ To keep a copy of our project, you can follow the next steps:
   ```bash
     pip install -r requirements.txt
   ```
-6. Create a ```.env``` file on the root folder of your project. There, you must save your OpenAI API KEY[^1] and the Client ID, Client Secret and redirect URI of your Google project[^2] for the OAuth in the following format:
+6. Create a ```.env``` file on the root folder of your project. There, you must save your OpenAI API KEY[^1], Gemini API KEY, the Client ID, Client Secret and redirect URI of your Google project[^2] for the OAuth in the following format:
 ```.env
   OPENAI_API_KEY=<YOUR OPENAI API KEY>
+  GEMINI_API_KEY=<YOUR GEMINI API KEY>
   GOOGLE_CLIENT_ID=<YOUR GOOGLE PROJECT CLIENT ID>
   GOOGLE_CLIENT_SECRET=<YOUR GOOGLE PROJECT CLIENT SECRET>
   GOOGLE_REDIRECT_URI=<YOUR GOOGLE PROJECT REDIRECT URI>
