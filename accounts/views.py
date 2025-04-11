@@ -6,6 +6,7 @@ from .forms import *
 from .models import *
 from roadMap.models import Interest, UserInterest, Roadmap, LikeRoadmap
 from urllib.parse import urlencode
+from django.views import View
 import requests
 
 def __infoUser__(user):
@@ -72,8 +73,18 @@ def logoutAccount(request):
     logout(request)
     return redirect('home')
 
-def registerView(request):
-    if request.method == 'POST':
+class registerView(View):
+    template_name = 'register.html'
+
+    def get(self, request):
+        form = RegisterForm()
+        context = {
+            'form': form,
+            'isCompany': False
+        }
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -85,19 +96,10 @@ def registerView(request):
                 Person.objects.create(user=user, dateOfBirth=dateOfBirth)
             login(request, user)
             return redirect('interestSelection')
-        else:
-            context = {
-                'form': form,
-                'first_name': request.POST.get('first_name'),
-                'last_name': request.POST.get('last_name'),
-                'dateOfBirth': request.POST.get('dateOfBirth'),
-                'companyName': request.POST.get('companyName'),
-                'isCompany': request.POST.get('isCompany'),
-            }
-            return render(request, 'register.html', context=context)
-    else:
-        form = RegisterForm()
-    return render(request, 'register.html', {'form': form, 'isCompany': False})
+        context = {
+            'form': form,
+        }
+        return render(request, self.template_name, context)
 
 @login_required
 def interestSelection(request):
