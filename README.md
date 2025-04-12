@@ -20,7 +20,7 @@ JobJourney is a web application developed by [Santiago Idárraga](https://github
 JobJourney is for those who dont have an idea of how to start their professional career or how to continue it to reach their dream job. Our scope is to guide individuals in their professional development by providing personalized, structured career roadmaps build with AI.
 
 
-# How to install
+# How to install/run
 To keep a copy of our project, you can follow the next steps:
 1. (Optional) Fork the repository.
 2. Clone the repository.
