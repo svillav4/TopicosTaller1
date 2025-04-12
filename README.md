@@ -4,6 +4,8 @@
 </h1>
 
 **Welcome to JobJourney. Let's walk through this guide for a fast introduction to our project.**
+**This is a fork of the original project intented to deliver as TopicosTaller1. By: Juan José Botero, Mateo García & Samuel Villa**
+
 # Table of contents
 - [Table of contents](#table-of-contents)
 - [About](#about)
